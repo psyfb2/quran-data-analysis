@@ -89,6 +89,15 @@ def test_float_asserted_value_rejected() -> None:
         Claim.model_validate(d)
 
 
+def test_whole_number_float_asserted_value_rejected() -> None:
+    # A whole-number float (365.0) would otherwise be silently coerced to int 365;
+    # the validator must reject it so the "counts are integers" intent holds.
+    d = _valid_claim_dict()
+    d["asserted_value"] = 365.0
+    with pytest.raises(ValidationError):
+        Claim.model_validate(d)
+
+
 def test_bool_asserted_value_rejected() -> None:
     # Python bool is a subclass of int; the model validator must reject it.
     d = _valid_claim_dict()

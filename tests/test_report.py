@@ -1,11 +1,12 @@
 """Tests for the Markdown report generator (Task 9).
 
-Pure / offline / synthetic only — no full Tanzil/QAC load and no real
-corpus-count assertions (the runner's verdicts are covered in
-``test_claims_runner.py``). A tiny synthetic corpus + synthetic register + a local
-``checks`` table exercise every ``_format_measured`` branch (int, tuple, None) and
-prove the str-enum verdict is rendered via ``.value``; a pure ``render_report``
-unit covers the Markdown pipe-escaping edge case.
+Mostly pure / offline / synthetic — a tiny synthetic corpus + synthetic register +
+a local ``checks`` table exercise every ``_format_measured`` branch (int, tuple,
+None) and prove the str-enum verdict is rendered via ``.value``; a pure
+``render_report`` unit covers the Markdown pipe-escaping edge case. The one
+exception is the drift guard (``test_committed_report_matches_runner_output``),
+which loads the real corpus + morphology to ensure the committed deliverable is
+not stale — mirroring the JSON-schema drift guard in ``test_claims_schema.py``.
 """
 
 from __future__ import annotations
@@ -15,9 +16,18 @@ from pathlib import Path
 import pytest
 
 from quran_analysis.claims.registry import CheckContext, CheckFn, Measurement
-from quran_analysis.claims.report import generate_report, render_report
-from quran_analysis.claims.runner import ClaimResult, Verdict
-from quran_analysis.claims.schema import Claim, ClaimsRegister
+from quran_analysis.claims.report import (
+    DEFAULT_REPORT_PATH,
+    generate_report,
+    render_report,
+)
+from quran_analysis.claims.runner import (
+    ClaimResult,
+    Verdict,
+    build_default_context,
+    run_register,
+)
+from quran_analysis.claims.schema import Claim, ClaimsRegister, load_register
 from quran_analysis.corpus import Corpus, load_corpus
 
 _SYNTHETIC_SIMPLE_CLEAN = """\
@@ -112,3 +122,18 @@ def test_render_report_is_deterministic() -> None:
         ClaimResult("c-b", 5, None, Verdict.AMBIGUOUS),
     ]
     assert render_report(register, results) == render_report(register, results)
+
+
+def test_committed_report_matches_runner_output() -> None:
+    """The committed ``reports/verification.md`` must equal a fresh render.
+
+    Drift guard for the primary deliverable (mirrors
+    ``test_committed_json_schema_matches_model``): if a check or a ``claims.yaml``
+    entry changes without re-running ``make report``, the committed report goes
+    stale and this fails loudly. Loads the real corpus + QAC morphology.
+    """
+    register = load_register()
+    results = run_register(register, build_default_context())
+    expected = render_report(register, results)
+    committed = DEFAULT_REPORT_PATH.read_text(encoding="utf-8")
+    assert committed == expected, "reports/verification.md is stale — run `make report` and commit"

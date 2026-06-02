@@ -73,13 +73,17 @@ class Claim(BaseModel):
 
     @field_validator("asserted_value", mode="before")
     @classmethod
-    def _asserted_value_not_bool(cls, value: object) -> object:
-        # Python ``bool`` is a subclass of ``int``; under the ``int | str`` union a
-        # YAML ``true``/``false`` would otherwise be coerced to ``1``/``0`` and
-        # silently accepted. Reject before coercion — a boolean is never a valid
-        # asserted quantity for this register.
+    def _asserted_value_type_guard(cls, value: object) -> object:
+        # Guard against pydantic's lax coercions under the ``int | str`` union:
+        #   * ``bool`` is a subclass of ``int``, so YAML ``true``/``false`` would be
+        #     coerced to ``1``/``0`` and silently accepted.
+        #   * a whole-number ``float`` (e.g. ``365.0``) would be coerced to ``365``.
+        # Both bypass the documented "counts are integers" intent — reject before
+        # coercion. (A fractional float like ``365.5`` is rejected by pydantic.)
         if isinstance(value, bool):
             raise ValueError("asserted_value must be an int or str, not a bool")
+        if isinstance(value, float):
+            raise ValueError("asserted_value must be an int or str, not a float")
         return value
 
 
