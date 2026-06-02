@@ -14,12 +14,16 @@ jobs:
         uses: astral-sh/setup-uv@v5
         with:
           enable-cache: true
+          python-version: "3.11"
 
       - name: Install dependencies
         run: make install
 
       - name: Lint
         run: make lint
+
+      - name: Typecheck
+        run: make typecheck
 
       - name: Test
         run: make test

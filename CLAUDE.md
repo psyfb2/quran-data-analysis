@@ -13,6 +13,7 @@ Common commands live in the `Makefile` and run through `uv`:
 | `make install` | `uv sync` — create `.venv`, install the project + dev tools |
 | `make format`  | `uv run ruff format .` |
 | `make lint`    | `uv run ruff format --check .` then `uv run ruff check .` |
+| `make typecheck` | `uv run mypy` (static type checking over `src` + `tests`) |
 | `make test`    | `uv run pytest` |
 | `make report`  | regenerate `reports/verification.md` (placeholder until Task 9) |
 
@@ -41,10 +42,12 @@ See `agentdocs/architecture.md` for the full design.
   pinned **identically** in `pyproject.toml` and `.pre-commit-config.yaml` so the two
   ruff paths never drift.
 - **Pre-commit:** run `uv run pre-commit install` once; the hook runs ruff (check + format)
-  on each commit. CI runs `make lint` directly and does not depend on pre-commit.
-- **CI:** `.github/workflows/ci.yml` installs uv (`astral-sh/setup-uv`) and runs
-  `make install` → `make lint` → `make test`. Corpus data is vendored into git so CI
-  needs no network access.
+  on each commit. The `ruff-check` hook runs with `--fix`, so if it auto-fixes a file the
+  commit is aborted with "files were modified by this hook" — just re-stage the fixed files
+  (`git add -u`) and commit again. CI runs `make lint` directly and does not depend on pre-commit.
+- **CI:** `.github/workflows/ci.yml` installs uv (`astral-sh/setup-uv`, pinned to Python
+  3.11 for reproducibility) and runs `make install` → `make lint` → `make typecheck` →
+  `make test`. Corpus data is vendored into git so CI needs no network access.
 
 ## Report regeneration
 

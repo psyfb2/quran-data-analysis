@@ -1,4 +1,4 @@
-.PHONY: install format lint test report
+.PHONY: install format lint typecheck test report
 
 install:
 	uv sync
@@ -9,6 +9,9 @@ format:
 lint:
 	uv run ruff format --check .
 	uv run ruff check .
+
+typecheck:
+	uv run mypy
 
 test:
 	uv run pytest
