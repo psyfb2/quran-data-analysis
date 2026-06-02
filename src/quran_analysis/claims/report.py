@@ -73,7 +73,13 @@ def _cell(text: str) -> str:
 
 
 def _header(results: list[ClaimResult]) -> str:
-    """Render the report header documenting edition + normalisation choices."""
+    """Render the report header documenting edition + normalisation choices.
+
+    The edition list below is hardcoded to match ``build_default_context``
+    (Simple-Clean + QAC). If that context is ever extended to load another
+    edition (e.g. Uthmani for a future claim), update this header so it stays
+    accurate.
+    """
     counts = Counter(r.verdict.value for r in results)
     summary = " / ".join(f"{counts.get(v, 0)} {v}" for v in ("match", "mismatch", "ambiguous"))
     return f"""# Quran claims — verification report
@@ -130,12 +136,15 @@ def render_report(register: ClaimsRegister, results: list[ClaimResult]) -> str:
     lines.append("| " + " | ".join(_COLUMNS) + " |")
     lines.append("| " + " | ".join("---" for _ in _COLUMNS) + " |")
     for claim, result in zip(register.claims, results, strict=True):
+        # Every cell is run through _cell(): ids and verdict values can never
+        # contain a pipe (id is schema-constrained, verdict is an enum literal),
+        # but sanitising uniformly makes "no cell can break the table" explicit.
         row = (
-            result.id,
+            _cell(result.id),
             _cell(claim.description),
             _cell(str(result.asserted)),
             _cell(_format_measured(result.measured)),
-            result.verdict.value,
+            _cell(result.verdict.value),
             _cell(claim.operational_definition),
         )
         lines.append("| " + " | ".join(row) + " |")
