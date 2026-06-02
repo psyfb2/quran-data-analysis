@@ -33,9 +33,13 @@ from quran_analysis.primitives import (
 # ("بسمم") differs from sura 1:1's ("بسم") yet shares the stable trailing three
 # tokens, so the loader splits it AND the first basmala token is unique to the
 # separated basmala — letting us reach the BASMALA_AYA (0) sentinel.
+# Verse 1:3 ("هدى", ending in alef-maksura ى) exists so the `normalizer` hook can
+# be shown to be load-bearing: only a final-form-folding normalizer matches it
+# against the query "هدي" (ending in yeh ي).
 _SYNTHETIC_UTHMANI = """\
 1|1|بسم الله الرحمن الرحيم
 1|2|الحمد لله رب العالمين
+1|3|هدى
 2|1|بسمم الله الرحمن الرحيم الم
 2|2|ذلك الكتاب لا ريب فيه
 """
@@ -70,12 +74,16 @@ def test_count_by_form_missing_and_empty(synthetic: Corpus) -> None:
     assert count_by_form(synthetic, "ّ") == 0  # diacritic-only -> normalises to empty
 
 
-def test_count_by_form_custom_normalizer(synthetic: Corpus) -> None:
+def test_count_by_form_custom_normalizer_is_load_bearing(synthetic: Corpus) -> None:
     # The normalizer hook lets a claim opt into final-form folding without the
-    # primitive baking in claim logic. "العالمين" ends in nun, so this is a
-    # smoke check that a custom normalizer is honoured (no crash, same count).
+    # primitive baking in claim logic. The corpus word "هدى" (alef-maksura) is
+    # NOT matched by the query "هدي" (yeh) under the default normalizer, but IS
+    # matched once final-form folding is applied — proving the hook is honoured.
     final = lambda s: normalize_final_forms(normalize(s))  # noqa: E731
-    assert count_by_form(synthetic, "العالمين", normalizer=final) == 1
+    assert count_by_form(synthetic, "هدي") == 0  # default: ى != ي
+    assert count_by_form(synthetic, "هدي", normalizer=final) == 1  # ى folded to ي
+    # The bare alef-maksura form still matches itself under the default normalizer.
+    assert count_by_form(synthetic, "هدى") == 1
 
 
 # --- count_by_substring ---------------------------------------------------------
@@ -191,6 +199,14 @@ def test_real_first_occurrence_of_allah_is_basmala(real_corpus: Corpus) -> None:
     # ayas differently — so an exact cross-edition count equality is not asserted;
     # see progress.txt.)
     assert first_occurrence_position(real_corpus, "الله") == (1, 1)
+
+
+def test_real_substring_count_exceeds_exact_form_count(real_corpus: Corpus) -> None:
+    # Non-tautological structural invariant on the real corpus: every word equal
+    # to the exact form "الله" also contains it as a substring, AND words like
+    # "والله"/"بالله" contain it without being the exact form — so the substring
+    # count must be strictly greater than the exact-form count.
+    assert count_by_substring(real_corpus, "الله") > count_by_form(real_corpus, "الله") > 0
 
 
 def test_real_letter_frequency_total_matches_char_count(real_corpus: Corpus) -> None:

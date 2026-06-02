@@ -102,7 +102,7 @@ def count_by_form(
         is empty/whitespace-only or after normalisation reduces to empty.
     """
     target = normalizer(form)
-    if not target:
+    if not target.strip():
         return 0
     return sum(
         1 for w in corpus.words(include_basmala=include_basmala) if normalizer(w.text) == target
@@ -131,10 +131,11 @@ def count_by_substring(
 
     Returns:
         The total non-overlapping occurrences across all words; ``0`` if
-        ``substring`` is empty (guarding ``"".count`` degenerate behaviour).
+        ``substring`` is empty/whitespace-only or normalises to empty (guarding
+        the ``"".count`` degenerate behaviour).
     """
     needle = normalizer(substring)
-    if not needle:
+    if not needle.strip():
         return 0
     return sum(
         normalizer(w.text).count(needle) for w in corpus.words(include_basmala=include_basmala)
@@ -188,11 +189,11 @@ def first_occurrence_position(
         normalizer: Surface-form normaliser applied to both sides.
 
     Returns:
-        The ``(sura, aya)`` of the first match, or ``None`` if ``form`` is empty
-        or never occurs.
+        The ``(sura, aya)`` of the first match, or ``None`` if ``form`` is
+        empty/whitespace-only (or normalises to empty) or never occurs.
     """
     target = normalizer(form)
-    if not target:
+    if not target.strip():
         return None
     for w in corpus.words(include_basmala=include_basmala):
         if normalizer(w.text) == target:
