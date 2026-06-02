@@ -8,13 +8,12 @@ operates on a literal string via :func:`~quran_analysis.normalize.normalize`.
 
 from __future__ import annotations
 
+from quran_analysis.claims.checks._text import BASMALA
 from quran_analysis.claims.registry import CheckContext, Measurement, check
 from quran_analysis.claims.schema import Claim
 from quran_analysis.corpus import Corpus
 from quran_analysis.normalize import normalize
 from quran_analysis.primitives import letter_frequency
-
-_BASMALA = "بسم الله الرحمن الرحيم"
 
 
 def _sura_letter_freq(corpus: Corpus, sura: int) -> dict[str, int]:
@@ -40,5 +39,5 @@ def noon_surah68_frequency(claim: Claim, ctx: CheckContext) -> Measurement:
 @check("basmala-19-letters")
 def basmala_19_letters(claim: Claim, ctx: CheckContext) -> Measurement:
     # Edition-independent: literal string, no corpus scan.
-    measured = len(normalize(_BASMALA).replace(" ", ""))
+    measured = len(normalize(BASMALA).replace(" ", ""))
     return Measurement(measured, measured == claim.asserted_value)

@@ -18,6 +18,7 @@ from __future__ import annotations
 
 from collections.abc import Callable, Mapping
 from dataclasses import dataclass
+from types import MappingProxyType
 
 from quran_analysis.claims.schema import Claim
 from quran_analysis.corpus import Corpus
@@ -108,5 +109,10 @@ def check(claim_id: str) -> Callable[[CheckFn], CheckFn]:
 
 
 def registry() -> Mapping[str, CheckFn]:
-    """Return a read-only view of the global check registry."""
-    return _CHECKS
+    """Return a read-only view of the global check registry.
+
+    Wrapped in :class:`~types.MappingProxyType` so the read-only contract is
+    enforced at runtime — callers cannot mutate the registry behind the
+    duplicate-id guard in :func:`check`.
+    """
+    return MappingProxyType(_CHECKS)

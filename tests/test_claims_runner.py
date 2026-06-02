@@ -186,6 +186,8 @@ def test_real_clean_anchors_match(real_results: list[ClaimResult]) -> None:
         "dunya-115",
         "basmala-19-letters",
         "abjad-allah-66",
+        "abjad-basmala-786",
+        "qaf-surah50-frequency",
         "allah-first-occurrence-1-1",
         "malaika-shayatin-equal",
     ):

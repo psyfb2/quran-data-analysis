@@ -13,8 +13,16 @@ from quran_analysis.primitives import first_occurrence_position
 
 
 def _parse_pos(value: int | str) -> tuple[int, int]:
-    """Parse a ``"sura:aya"`` asserted value into a ``(sura, aya)`` tuple."""
-    sura, aya = str(value).split(":")
+    """Parse a ``"sura:aya"`` asserted value into a ``(sura, aya)`` tuple.
+
+    Positional claims assert their position as the string ``"sura:aya"`` (e.g.
+    ``"1:1"``) per ``agentdocs/claims-schema.md``. A bare int has no aya part and
+    is rejected with a clear error rather than failing cryptically on unpack.
+    """
+    parts = str(value).split(":")
+    if len(parts) != 2:
+        raise ValueError(f'positional asserted_value must be "sura:aya", got {value!r}')
+    sura, aya = parts
     return (int(sura), int(aya))
 
 

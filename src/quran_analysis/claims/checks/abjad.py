@@ -6,6 +6,7 @@ Both are edition-independent: they operate on literal strings via
 
 from __future__ import annotations
 
+from quran_analysis.claims.checks._text import BASMALA
 from quran_analysis.claims.registry import CheckContext, Measurement, check
 from quran_analysis.claims.schema import Claim
 from quran_analysis.primitives import abjad_value
@@ -19,5 +20,5 @@ def abjad_allah_66(claim: Claim, ctx: CheckContext) -> Measurement:
 
 @check("abjad-basmala-786")
 def abjad_basmala_786(claim: Claim, ctx: CheckContext) -> Measurement:
-    measured = abjad_value("بسم الله الرحمن الرحيم")
+    measured = abjad_value(BASMALA)
     return Measurement(measured, measured == claim.asserted_value)
