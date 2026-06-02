@@ -34,6 +34,17 @@ the engine that evaluates it.
    See also `claims-schema.md`.
 6. **Reporting** (Task 9) — renders `reports/verification.md` via `make report`.
 
-Flow: **tooling → corpus + normalisation → primitives → claims → report.**
+**Optional: Morphology** (`morphology.py`, Task 7) — a dataset *parallel* to the
+corpus. The Quranic Arabic Corpus (QAC) morphology edition is vendored and parsed
+by `load_morphology()` into a frozen-dataclass `Morphology -> MorphologyWord`
+model keyed by `(sura, aya, word)`, with `count_by_root` / `count_by_lemma`
+primitives (exact Buckwalter match). It was integrated because the populated
+register flags claims (e.g. day=365) that need *lemma/root* counts surface forms
+cannot reproduce. It keeps `corpus.py` / `primitives.py` untouched and adds **no**
+runtime dependency. The QAC data is **GPL** (vendored verbatim; mere aggregation —
+the MIT code is not relicensed). See `morphology.md`.
+
+Flow: **tooling → corpus + normalisation → primitives → claims → report**, with
+the optional morphology dataset feeding the claim-runner's root/lemma checks.
 
 > Stub created in Task 1; expanded by later tasks as each layer is implemented.

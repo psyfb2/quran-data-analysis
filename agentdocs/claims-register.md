@@ -51,10 +51,14 @@ counting — e.g. surface `يوم` = 217 (not 365); the 365 figure is a *singula
 lemma* count. These entries set **`requires_morphology: true`**.
 
 **Consequence:** at least one catalogued claim genuinely needs morphology, so
-**Task 7 becomes a real Quranic-Arabic-Corpus integration** (root/lemma loader +
-`count_by_root` / `count_by_lemma`), not a "no morphology needed" close-out. The
-Task-8 runner will resolve a `requires_morphology` claim to `ambiguous` until Task 7
-provides the lemma path.
+**Task 7 was a real Quranic-Arabic-Corpus integration** (root/lemma loader +
+`count_by_root` / `count_by_lemma` in `morphology.py`), not a "no morphology
+needed" close-out — see `morphology.md` for the dataset, license, and the
+per-claim Buckwalter root/lemma codes the Task-8 checks use. Of the 7
+`requires_morphology` claims, Task 8 can resolve **5** to match/mismatch; the **2**
+that also carry an `ambiguity_note` (`hayat-mawt-equal`, `bahr-barr-water-ratio`)
+stay `ambiguous` even with morphology (PRD req 11). A `requires_morphology` claim
+resolves to `ambiguous` only if its lemma path is unavailable.
 
 ## Verdict mix (honest outcome)
 

@@ -24,14 +24,16 @@ src/quran_analysis/
   corpus.py       # Task 2 — load vendored Tanzil editions into Corpus->Sura->Aya->Word
   normalize.py    # Task 3 — pure tashkeel/hamza/tatweel/tokenisation functions
   primitives.py   # Task 4 — claim-agnostic counts (form/substring/letter-freq/abjad/position)
+  morphology.py   # Task 7 — OPTIONAL QAC root/lemma loader + count_by_root/count_by_lemma
   claims/
     schema.py          # Task 5 — Claim/ClaimsRegister Pydantic models + load_register()
     claims.schema.json # Task 5 — JSON Schema generated from the model (drift-guarded)
                        # Tasks 8/9 add the check registry, runner and report here
 claims.yaml       # Task 6 — populated research register (16 claims), governed by claims/schema.py
 tests/            # pytest suite
-data/             # Task 2 — vendored Arabic corpus (committed for offline CI)
-agentdocs/        # architecture.md, corpus.md, normalisation.md, claims-schema.md, claims-register.md
+data/             # vendored corpora (committed for offline CI): Tanzil editions (Task 2, CC BY-ND)
+                  #   + quranic-corpus-morphology-0.4.txt (Task 7, QAC — GPL, vendored verbatim)
+agentdocs/        # architecture.md, corpus.md, normalisation.md, claims-schema.md, claims-register.md, morphology.md
 ```
 
 Layered flow: **tooling → corpus + normalisation → primitives → claims (schema/runner) → report.**
