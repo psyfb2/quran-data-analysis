@@ -2,7 +2,15 @@ name: CI
 
 on:
   push:
+    branches: [main]
   pull_request:
+
+# Avoid duplicate runs: a push to a PR branch is already covered by the
+# pull_request event, so push only triggers on the default branch. Cancel
+# superseded in-progress runs for the same ref (e.g. rapid successive pushes).
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   lint-and-test:

@@ -148,10 +148,10 @@ def test_empty_register_accepted() -> None:
     assert register.claims == []
 
 
-# --- stub register + drift guard ------------------------------------------
+# --- real register + drift guard ------------------------------------------
 
 
-def test_stub_claims_yaml_validates() -> None:
+def test_real_claims_yaml_validates() -> None:
     register = load_register()
     assert len(register.claims) >= 1
     assert all(isinstance(c, Claim) for c in register.claims)
