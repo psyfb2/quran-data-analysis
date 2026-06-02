@@ -39,7 +39,7 @@ req 11 — undisclosed/non-deterministic conventions are never forced):
 | Version | **0.4** (2011), by Kais Dukes |
 | File | `data/quranic-corpus-morphology-0.4.txt` (vendored verbatim, ~6.3 MB) |
 | Source | `https://corpus.quran.com/download/` (gated behind an email form). Retrieved 2026-06-02 from the public mirror `q-ran/quran` (`sources/1.0/quranic-corpus-morphology-0.4.txt`); the file's own header was verified to state "version 0.4" + the GPL notice before trusting it. |
-| License | **GNU General Public License.** "Permission is granted to copy and distribute verbatim copies of this file, but **CHANGING IT IS NOT ALLOWED**", and the Quranic Arabic Corpus must be clearly indicated with a link to <https://corpus.quran.com>. The QAC builds on the Tanzil Uthmani text (CC BY-ND 3.0), whose copyright block is also retained in the file. |
+| License | **GNU General Public License.** "Permission is granted to copy and distribute verbatim copies of this file, but **CHANGING IT IS NOT ALLOWED**", and the Quranic Arabic Corpus must be clearly indicated with a link to <https://corpus.quran.com>. The QAC builds on the Tanzil Uthmani text and retains its copyright block (the *embedded* edition is Tanzil **v1.0.2**, whose own header states CC BY-ND 3.0 — note this is a different/older edition than the standalone CC BY 3.0 v1.1 files documented in `corpus.md`). |
 
 The file is **vendored verbatim** (header/license preamble bytes intact, never
 mutated) and committed so tests/CI run offline, exactly like the Tanzil editions.

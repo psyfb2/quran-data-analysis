@@ -31,7 +31,7 @@ src/quran_analysis/
                        # Tasks 8/9 add the check registry, runner and report here
 claims.yaml       # Task 6 — populated research register (16 claims), governed by claims/schema.py
 tests/            # pytest suite
-data/             # vendored corpora (committed for offline CI): Tanzil editions (Task 2, CC BY-ND)
+data/             # vendored corpora (committed for offline CI): Tanzil editions (Task 2, CC BY 3.0)
                   #   + quranic-corpus-morphology-0.4.txt (Task 7, QAC — GPL, vendored verbatim)
 agentdocs/        # architecture.md, corpus.md, normalisation.md, claims-schema.md, claims-register.md, morphology.md
 ```

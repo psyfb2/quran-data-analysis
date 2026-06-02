@@ -127,9 +127,23 @@ def test_synthetic_edge_cases(tmp_path: Path) -> None:
 
 
 def test_validate_rejects_partial_span(tmp_path: Path) -> None:
-    """``load_morphology`` enforces the 114-sura / 6236-aya structural guard."""
+    """``load_morphology`` enforces the 114-sura guard."""
     _write_morphology(tmp_path, _SYNTHETIC_ROWS)
     with pytest.raises(ValueError, match="suras not exactly 1..114"):
+        load_morphology(data_dir=tmp_path)
+
+
+def test_validate_rejects_wrong_aya_count(tmp_path: Path) -> None:
+    """The 6236-aya guard fires independently when all 114 suras are present.
+
+    Build exactly 114 suras with one aya each (114 ``(sura, aya)`` pairs, not
+    6236) so the sura guard passes and the aya guard is what rejects the data.
+    """
+    rows = "".join(
+        f"({s}:1:1:1)\tyawomi\tN\tSTEM|POS:N|LEM:yawom|ROOT:ywm|M|GEN\n" for s in range(1, 115)
+    )
+    _write_morphology(tmp_path, rows)
+    with pytest.raises(ValueError, match="6236"):
         load_morphology(data_dir=tmp_path)
 
 
@@ -140,35 +154,44 @@ def test_malformed_line_rejected(tmp_path: Path) -> None:
         load_morphology(data_dir=tmp_path)
 
 
-# --- One real-data anchor (module-scoped: load the vendored file once). --------
-
-_REAL = load_morphology()
+# --- One real-data anchor (module-scoped fixture: load the vendored file once). -
 
 
-def test_real_structural_span() -> None:
+@pytest.fixture(scope="module")
+def real_morphology() -> Morphology:
+    """Load the vendored QAC file once (mirrors ``real_corpus`` in test_primitives).
+
+    A module-scoped fixture (not an import-time load) defers the I/O to test
+    execution, so an absent/corrupt vendored file fails the real-data tests with
+    a clear, scoped error rather than a cryptic collection-phase traceback.
+    """
+    return load_morphology()
+
+
+def test_real_structural_span(real_morphology: Morphology) -> None:
     """The vendored QAC file spans exactly 114 suras and 6236 ayas."""
-    assert {w.sura for w in _REAL.words} == set(range(1, 115))
-    assert len({(w.sura, w.aya) for w in _REAL.words}) == 6236
+    assert {w.sura for w in real_morphology.words} == set(range(1, 115))
+    assert len({(w.sura, w.aya) for w in real_morphology.words}) == 6236
 
 
-def test_real_count_is_consistent() -> None:
+def test_real_count_is_consistent(real_morphology: Morphology) -> None:
     """``count_by_root`` matches an independent re-derivation (no magic number)."""
     root = "ywm"  # day
-    expected = sum(1 for w in _REAL.words if w.root == root)
-    assert count_by_root(_REAL, root) == expected
-    assert count_by_root(_REAL, root) > 0
+    expected = sum(1 for w in real_morphology.words if w.root == root)
+    assert count_by_root(real_morphology, root) == expected
+    assert count_by_root(real_morphology, root) > 0
 
 
-def test_real_root_subsumes_lemma() -> None:
+def test_real_root_subsumes_lemma(real_morphology: Morphology) -> None:
     """A root count is >= any single lemma's count under it (structural invariant)."""
     # Every word with lemma 'yawom' has root 'ywm', so root >= lemma.
-    assert count_by_root(_REAL, "ywm") >= count_by_lemma(_REAL, "yawom")
-    assert count_by_lemma(_REAL, "yawom") > 0
+    assert count_by_root(real_morphology, "ywm") >= count_by_lemma(real_morphology, "yawom")
+    assert count_by_lemma(real_morphology, "yawom") > 0
 
 
-def test_real_basmala_sura1_only() -> None:
+def test_real_basmala_sura1_only(real_morphology: Morphology) -> None:
     """Sura 1's basmala is words of aya 1:1; suras 2-114 don't repeat it."""
-    allah = _REAL.word(1, 1, 2)
+    allah = real_morphology.word(1, 1, 2)
     assert allah.lemma == "{ll~ah"
     # Sura 2 word 1 is the muqatta'at "Alm", NOT a repeated basmala 'bi' particle.
-    assert _REAL.word(2, 1, 1).form.startswith("Al")
+    assert real_morphology.word(2, 1, 1).form.startswith("Al")
