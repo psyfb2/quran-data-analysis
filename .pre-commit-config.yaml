@@ -1,0 +1,9 @@
+# Pinned to the SAME ruff version as the `dev` dependency group in pyproject.toml
+# so the pre-commit ruff and `make lint`/CI ruff never drift.
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.14.2
+    hooks:
+      - id: ruff-check
+        args: [--fix]
+      - id: ruff-format
