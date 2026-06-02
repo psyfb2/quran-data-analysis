@@ -82,11 +82,14 @@ claims:
       Popular numerical-miracle literature. Untrusted; re-derived below.
     asserted_value: 30
     operational_definition: >-
-      Edition: Tanzil Simple-Clean. Normalisation: canonical normalize() pipeline
-      (which folds the initial hamza, so "أيام" and "ايام" coincide), no final-form
-      folding. Basmala: separated basmalas excluded. Counted: the plural lemma
-      "ayyam" of yawm across case endings and clitics. Lemma-level — not an exact
-      surface-form count.
+      Edition: Tanzil Simple-Clean for surface re-derivation; QAC v0.4 morphology
+      for the lemma count. Normalisation: canonical normalize() pipeline (which
+      folds the initial hamza, so "أيام" and "ايام" coincide), no final-form
+      folding. Basmala: separated basmalas excluded. Counted: the claim prescribes
+      the plural lemma "ayyam" of yawm, but QAC lemmatises both singular يوم and
+      plural أيام under the single shared lemma "yawom" — so the lemma count cannot
+      isolate the plural and measures 405 (singular + plural combined), not a
+      plural-only figure. Lemma-level — not an exact surface-form count.
     expected_result: plural-lemma-count(ayyam) == 30
     requires_morphology: true
     rederivation_note: >-
