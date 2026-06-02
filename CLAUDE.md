@@ -28,7 +28,10 @@ src/quran_analysis/
   claims/
     schema.py          # Task 5 — Claim/ClaimsRegister Pydantic models + load_register()
     claims.schema.json # Task 5 — JSON Schema generated from the model (drift-guarded)
-                       # Tasks 8/9 add the check registry, runner and report here
+    registry.py        # Task 8 — CheckContext/Measurement + @check decorator registry
+    runner.py          # Task 8 — evaluate_claim/run_register -> ClaimResult{id,asserted,measured,verdict}
+    checks/            # Task 8 — per-claim checks (decorator-registered, by category)
+                       # Task 9 adds the report generator here
 claims.yaml       # Task 6 — populated research register (16 claims), governed by claims/schema.py
 tests/            # pytest suite
 data/             # vendored corpora (committed for offline CI): Tanzil editions (Task 2, CC BY 3.0)
