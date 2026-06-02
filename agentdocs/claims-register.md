@@ -63,16 +63,21 @@ resolves to `ambiguous` only if its lemma path is unavailable.
 ## Verdict mix (honest outcome)
 
 The register deliberately yields a **mix** of outcomes — this is the point of the
-project, not a flaw:
+project, not a flaw. The final outcome over the 16 catalogued claims is
+**7 match / 4 mismatch / 5 ambiguous** (matching `reports/verification.md` and
+`architecture.md`):
 
-- **Clean match anchors** (deterministic, reproduce): `basmala-19-letters` (19),
-  `dunya-115` (115), `qaf-surah50-frequency` (`ق` = 57), `abjad-allah-66` (66),
-  `abjad-basmala-786` (786), `allah-first-occurrence-1-1` ((1,1)).
-- **Mismatch / undisclosed-convention** (`ambiguity_note` set, never forced):
-  `dunya-akhira-equal` (115 vs 71), `sab-seven-heavens` (surface 14 ≠ 7),
-  `bahr-barr-water-ratio`, `noon-surah68-frequency`.
-- **Morphology-pending** (`requires_morphology: true`): the 365/12/30 family and the
-  lemma pair claims.
+- **Match (7):** `dunya-115` (115), `qaf-surah50-frequency` (`ق` = 57),
+  `basmala-19-letters` (19), `abjad-allah-66` (66), `abjad-basmala-786` (786),
+  `allah-first-occurrence-1-1` ((1,1)), `malaika-shayatin-equal` (88 == 88, the one
+  morphology-backed match).
+- **Mismatch (4):** `yawm-singular-365` (lemma `yawom` = 405), `shahr-month-12`
+  (lemma `$ahor` = 21), `ayyam-days-30` (lemma `yawom` = 405 — QAC merges the singular
+  and plural into one lemma), `rajul-imraa-equal` (29 vs 26).
+- **Ambiguous (5)** (`ambiguity_note` set → the measured value is kept, never forced):
+  `sab-seven-heavens` (surface 14), `dunya-akhira-equal` (115 vs 71),
+  `noon-surah68-frequency` (131), `hayat-mawt-equal` (76 vs 50, root counts),
+  `bahr-barr-water-ratio` (root `bHr` = 42).
 
 ## Adding or revising a claim
 

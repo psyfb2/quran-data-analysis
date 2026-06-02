@@ -81,5 +81,3 @@ the MIT code is not relicensed). See `morphology.md`.
 
 Flow: **tooling → corpus + normalisation → primitives → claims → report**, with
 the optional morphology dataset feeding the claim-runner's root/lemma checks.
-
-> Stub created in Task 1; expanded by later tasks as each layer is implemented.
