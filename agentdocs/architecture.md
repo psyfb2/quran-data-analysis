@@ -26,12 +26,31 @@ the engine that evaluates it.
    Pydantic v2 `Claim` / `ClaimsRegister` models are the source of truth; the
    committed `claims/claims.schema.json` is generated from them (drift-guarded by a
    test). `load_register()` validates the YAML into models and is reused by the
-   runner. Each claim's check is a registered callable; the runner returns
-   `{asserted, measured, verdict}` with verdict ∈ match/mismatch/ambiguous. The
-   register is **populated** in Task 6 (16 researched claims spanning
+   runner. The register is **populated** in Task 6 (16 researched claims spanning
    constant/pair-count/letter-freq/abjad/positional); its edition policy,
    re-derivation discipline and the morphology decision are in `claims-register.md`.
    See also `claims-schema.md`.
+
+   **Claim-runner** (Task 8) — open/closed via a decorator registry. Each claim's
+   check is a small callable registered with `@check("<id>")` (`claims/registry.py`)
+   that composes the Task-4 primitives (and the Task-7 morphology primitives where
+   the op-def needs root/lemma) per the claim's *self-contained* operational
+   definition. The checks live under `claims/checks/` grouped by category and
+   register on import; adding a future claim is a YAML entry **plus** a registered
+   check — never a change to a central switch. `runner.py` exposes `evaluate_claim`
+   / `run_register` (preserving register order) returning `ClaimResult{id, asserted,
+   measured, verdict}` with verdict ∈ match/mismatch/ambiguous. Verdict-decision
+   order: (1) **no registered check → ambiguous** (graceful; a forgotten real check
+   is still caught loudly by a registry-coverage test); (2) `requires_morphology`
+   but no morphology loaded → ambiguous *without* calling the check; (3) an
+   `ambiguity_note` → ambiguous but the measured value is kept (PRD req 11: never
+   forced); (4) otherwise the honest comparison decided by the check. There is no
+   broad `try/except` around a check — swallowing would silently hide a bug as
+   ambiguous. The check owns the comparison semantics (numeric vs pair vs
+   positional equality); the runner only applies these cross-cutting overrides.
+   `build_default_context()` loads only Simple-Clean + QAC morphology (all current
+   checks name Simple-Clean). The current register evaluates to 7 match / 4
+   mismatch / 5 ambiguous.
 6. **Reporting** (Task 9) — renders `reports/verification.md` via `make report`.
 
 **Optional: Morphology** (`morphology.py`, Task 7) — a dataset *parallel* to the
