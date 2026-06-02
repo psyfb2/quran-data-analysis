@@ -5,9 +5,12 @@ description = "Verify or refute widely-claimed numerical/linguistic patterns in 
 readme = "README.md"
 requires-python = ">=3.11"
 license = { file = "LICENSE" }
-# Runtime dependencies start empty and are added per-task as needed
-# (e.g. pyyaml + pydantic when the corpus loader / claims schema land).
-dependencies = []
+# Runtime dependencies are added per-task as needed. pydantic (claims schema,
+# source of truth) and pyyaml (claims.yaml register loader) landed in Task 5.
+dependencies = [
+    "pydantic>=2.13.4",
+    "pyyaml>=6.0.3",
+]
 
 [build-system]
 requires = ["hatchling"]
@@ -22,6 +25,7 @@ dev = [
     "pytest>=8",
     "pre-commit>=3",
     "mypy>=1.10",
+    "types-pyyaml>=6.0.12.20260518",
 ]
 
 [tool.ruff]

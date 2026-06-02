@@ -1,0 +1,47 @@
+# Claims register — the source of truth for quantifiable claims about the
+# Arabic text of the Quran. Governed by the machine-readable schema in
+# src/quran_analysis/claims/schema.py (and the generated claims.schema.json).
+#
+# NOTE: This is a TASK-5 STUB. It contains illustrative example claims only,
+# purely to demonstrate that a well-formed register validates against the
+# schema. Task 6 populates the real, researched register (re-deriving every
+# assertion from the Arabic text before adding it).
+claims:
+  # Example of a numeric (integer) asserted value.
+  - id: yawm-day-365
+    description: >-
+      The singular word for "day" (yawm) is claimed to occur exactly 365 times,
+      matching the number of days in a solar year.
+    source: >-
+      EXAMPLE STUB (Task 5). Widely circulated in popular numerical-miracle
+      literature; to be cited precisely and re-derived in Task 6.
+    asserted_value: 365
+    operational_definition: >-
+      EXAMPLE ONLY. Count occurrences of the exact normalised singular surface
+      form of yawm across the whole corpus. Diacritics stripped via the canonical
+      normalisation pipeline; the basmala counting convention and whether plural
+      and construct forms are included are to be pinned down in Task 6.
+    expected_result: count == 365
+    requires_morphology: false
+    tags: [constant, pair-count]
+
+  # Example of a symbolic (string) asserted value for a pair-equality claim.
+  - id: life-death-equal
+    description: >-
+      The words for "life" (al-hayah) and "death" (al-mawt) are claimed to occur
+      an equal number of times.
+    source: >-
+      EXAMPLE STUB (Task 5). Common pair-count claim; to be cited and re-derived
+      in Task 6.
+    asserted_value: equal
+    operational_definition: >-
+      EXAMPLE ONLY. Count occurrences of the normalised surface forms for "life"
+      and "death" across the whole corpus and compare. Exact forms, diacritic
+      handling and basmala convention to be specified in Task 6.
+    expected_result: count(life) == count(death)
+    requires_morphology: false
+    ambiguity_note: >-
+      EXAMPLE ONLY. The exact set of word forms counted for each side is
+      typically undisclosed in the popular statement; Task 6 must pin it down or
+      mark the claim ambiguous.
+    tags: [pair-count]
