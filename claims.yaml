@@ -91,9 +91,11 @@ claims:
     requires_morphology: true
     rederivation_note: >-
       Re-derived from Tanzil Simple-Clean on 2026-06-02. count_by_form("أيام") = 20
-      (and "ايام" = 20; identical in Uthmani after hamza folding). 20 != 30, so the
-      asserted figure depends on a lemma count that also captures clitic-attached
-      forms — needs morphology.
+      (and "ايام" = 20; identical in Uthmani after hamza folding);
+      count_by_substring("أيام") = 29 (over-counts: captures clitic-attached forms
+      such as أيامه / أيامهم, yet still does not reach 30). 20 != 30, so the asserted
+      figure depends on a lemma count that captures clitic-attached forms — needs
+      morphology.
     tags: [constant, morphology]
 
   - id: sab-seven-heavens
