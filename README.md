@@ -16,7 +16,7 @@ verdict of **match / mismatch / ambiguous** per claim.
 
 `ambiguous` is a first-class verdict: claims whose counting convention is undisclosed or
 non-deterministic (or that need morphology that is unavailable) are recorded as `ambiguous`
-rather than forced to a match/mismatch (PRD reqs 10/11).
+rather than forced to a match/mismatch — the project never force-resolves a verdict.
 
 ## What it produces
 
