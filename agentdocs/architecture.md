@@ -51,7 +51,23 @@ the engine that evaluates it.
    `build_default_context()` loads only Simple-Clean + QAC morphology (all current
    checks name Simple-Clean). The current register evaluates to 7 match / 4
    mismatch / 5 ambiguous.
-6. **Reporting** (Task 9) — renders `reports/verification.md` via `make report`.
+6. **Reporting** (`claims/report.py`, Task 9) — renders `reports/verification.md`
+   via `make report`. Split into a pure `render_report(register, results) -> str`
+   (zips the register with the runner results — same order — into the header + a
+   Markdown table of `id | claim | asserted | measured | verdict | operational
+   definition`) and an I/O driver `generate_report(*, register=None, ctx=None,
+   checks=None, output_path=...)` that defaults to `load_register()` +
+   `build_default_context()`, runs the runner and writes UTF-8 (the
+   register/ctx/checks params are the test hook). The header documents the corpus
+   edition(s) (Simple-Clean v1.1 CC BY 3.0 + QAC v0.4 GPL) and the canonical
+   `normalize()` choices the counts are relative to, plus a verdict legend and a
+   verdict-count summary. `measured` is stringified: `None` → an em-dash, a 2-tuple
+   `(a, b)` (pair counts or `(sura, aya)`) → `"a vs b"`, scalars verbatim; the
+   verdict is rendered via `Verdict.value` (the str-enum's `str()` is the repr, not
+   the value). Free-text cells escape `|` and collapse whitespace so the table
+   never breaks. No timestamp is emitted, so `make report`
+   (`python -m quran_analysis.claims.report`) is idempotent. The generated file is
+   committed as the deliverable.
 
 **Optional: Morphology** (`morphology.py`, Task 7) — a dataset *parallel* to the
 corpus. The Quranic Arabic Corpus (QAC) morphology edition is vendored and parsed

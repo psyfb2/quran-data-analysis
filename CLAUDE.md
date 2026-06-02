@@ -15,7 +15,7 @@ Common commands live in the `Makefile` and run through `uv`:
 | `make lint`    | `uv run ruff format --check .` then `uv run ruff check .` |
 | `make typecheck` | `uv run mypy` (static type checking over `src` + `tests`) |
 | `make test`    | `uv run pytest` |
-| `make report`  | regenerate `reports/verification.md` (placeholder until Task 9) |
+| `make report`  | regenerate `reports/verification.md` from `claims.yaml` + the corpus |
 
 ## Layout & key concepts
 
@@ -31,7 +31,7 @@ src/quran_analysis/
     registry.py        # Task 8 — CheckContext/Measurement + @check decorator registry
     runner.py          # Task 8 — evaluate_claim/run_register -> ClaimResult{id,asserted,measured,verdict}
     checks/            # Task 8 — per-claim checks (decorator-registered, by category)
-                       # Task 9 adds the report generator here
+    report.py          # Task 9 — render_report/generate_report -> reports/verification.md (make report)
 claims.yaml       # Task 6 — populated research register (16 claims), governed by claims/schema.py
 tests/            # pytest suite
 data/             # vendored corpora (committed for offline CI): Tanzil editions (Task 2, CC BY 3.0)
@@ -62,4 +62,11 @@ See `agentdocs/architecture.md` for the full design.
 ## Report regeneration
 
 `make report` regenerates `reports/verification.md` (the committed deliverable linked
-from CSTC-6). The real generator lands in Task 9; until then `make report` prints a notice.
+from CSTC-6). It runs the claim-runner over the full `claims.yaml` and renders a table
+(`id | claim | asserted | measured | verdict | operational definition`) preceded by a
+header documenting the corpus edition(s) and normalisation choices. The file is a pure
+function of `claims.yaml` + the vendored corpora (no timestamp, so regeneration is
+idempotent). After any analysis change, run `make report` and re-commit the result.
+The generator is `src/quran_analysis/claims/report.py` (`render_report` is the pure
+renderer; `generate_report` is the I/O driver; `python -m quran_analysis.claims.report`
+is the `make report` entry point).

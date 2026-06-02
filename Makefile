@@ -17,4 +17,4 @@ test:
 	uv run pytest
 
 report:
-	@echo "report generation not yet implemented — see Task 9"
+	uv run python -m quran_analysis.claims.report
