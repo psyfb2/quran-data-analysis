@@ -27,8 +27,11 @@ the engine that evaluates it.
    committed `claims/claims.schema.json` is generated from them (drift-guarded by a
    test). `load_register()` validates the YAML into models and is reused by the
    runner. Each claim's check is a registered callable; the runner returns
-   `{asserted, measured, verdict}` with verdict ∈ match/mismatch/ambiguous. See
-   `claims-schema.md`.
+   `{asserted, measured, verdict}` with verdict ∈ match/mismatch/ambiguous. The
+   register is **populated** in Task 6 (16 researched claims spanning
+   constant/pair-count/letter-freq/abjad/positional); its edition policy,
+   re-derivation discipline and the morphology decision are in `claims-register.md`.
+   See also `claims-schema.md`.
 6. **Reporting** (Task 9) — renders `reports/verification.md` via `make report`.
 
 Flow: **tooling → corpus + normalisation → primitives → claims → report.**

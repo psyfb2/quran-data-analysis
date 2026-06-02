@@ -39,6 +39,11 @@ silently dropped, catching authoring mistakes early.
 - Use an **`int`** for numeric claims — `365`, `12`, `19`.
 - Use a **`str`** for symbolic claims — e.g. `"equal"` for a pair-equality claim. The
   runner interprets the symbolic value together with `expected_result`.
+- **Positional convention:** for a first-occurrence / position claim the `str`
+  follows the **`"sura:aya"`** format (e.g. `"1:1"`); the runner parses it as
+  `tuple(int(x) for x in value.split(":"))` to compare against
+  `first_occurrence_position`, which returns a `(sura, aya)` tuple. (Used by
+  `allah-first-occurrence-1-1`.)
 - **`float` is rejected** (counts are integers — keeps verdicts deterministic).
 - **`bool` is rejected** even though Python's `bool` subclasses `int`: a YAML
   `true`/`false` is caught by a `mode="before"` field validator so it cannot be

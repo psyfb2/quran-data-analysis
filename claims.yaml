@@ -1,47 +1,431 @@
-# Claims register — the source of truth for quantifiable claims about the
-# Arabic text of the Quran. Governed by the machine-readable schema in
+# Claims register — the source of truth for quantifiable numerical/linguistic
+# claims about the Arabic text of the Quran that are circulated as evidence of
+# divine authorship. Governed by the machine-readable schema in
 # src/quran_analysis/claims/schema.py (and the generated claims.schema.json).
 #
-# NOTE: This is a TASK-5 STUB. It contains illustrative example claims only,
-# purely to demonstrate that a well-formed register validates against the
-# schema. Task 6 populates the real, researched register (re-deriving every
-# assertion from the Arabic text before adding it).
+# Task 6 (Phase 1) research output. Every asserted figure below is the *claimed*
+# (popular) number; it is UNTRUSTED. Each entry's `rederivation_note` records the
+# value actually MEASURED from the vendored Arabic corpus via the Task-4
+# primitives (re-derivation discipline, PRD req 13) — the verdict in the Task-8
+# runner/Task-9 report comes from the measurement, never from the source.
+#
+# Edition policy (load-bearing — see agentdocs/claims-register.md): popular
+# modern-spelling claims are evaluated against **Tanzil Simple-Clean**, because
+# Uthmani rasm differs orthographically (e.g. surface form `الحياة` = 0 in
+# Uthmani, spelled `الحيوة`, but 63 in Simple-Clean). Each operational_definition
+# names its own edition, basmala handling and diacritic handling so it is
+# self-contained and does not rely on any global convention.
+#
+# `requires_morphology: true` marks claims whose canonical figure depends on a
+# singular-noun lemma / root count that surface-form, substring, letter-frequency
+# and abjad primitives cannot faithfully reproduce. These drive Task 7.
 claims:
-  # Example of a numeric (integer) asserted value.
-  - id: yawm-day-365
+  # ----------------------------------------------------------------------------
+  # Constant claims (a count is asserted to equal a calendar / cosmological number)
+  # ----------------------------------------------------------------------------
+  - id: yawm-singular-365
     description: >-
-      The singular word for "day" (yawm) is claimed to occur exactly 365 times,
-      matching the number of days in a solar year.
+      The singular word for "day" (yawm, يوم) is claimed to occur exactly 365
+      times in the Quran, matching the number of days in a solar year.
     source: >-
-      EXAMPLE STUB (Task 5). Widely circulated in popular numerical-miracle
-      literature; to be cited precisely and re-derived in Task 6.
+      Popular numerical-miracle literature (e.g. Tariq Al-Suwaidan-style word-count
+      tables widely reproduced online and in da'wah pamphlets). Asserted figure is
+      treated as untrusted and re-derived below.
     asserted_value: 365
     operational_definition: >-
-      EXAMPLE ONLY. Count occurrences of the exact normalised singular surface
-      form of yawm across the whole corpus. Diacritics stripped via the canonical
-      normalisation pipeline; the basmala counting convention and whether plural
-      and construct forms are included are to be pinned down in Task 6.
-    expected_result: count == 365
-    requires_morphology: false
-    tags: [constant, pair-count]
+      Edition: Tanzil Simple-Clean. Normalisation: canonical normalize() pipeline
+      (tatweel removed, tashkeel stripped, hamza folded; final-form folding NOT
+      applied). Basmala: separated basmalas (suras 2–114 except 9) excluded; the
+      sura-1 basmala counts as aya 1:1. Counted: the singular noun lemma "yawm"
+      across all case endings and attached clitics, EXCLUDING the dual (yawmayn),
+      plurals (ayyam) and the adverbial fused form "yawma'idhin". This is a
+      lemma-level count, not an exact surface-form count — it cannot be reproduced
+      from count_by_form/count_by_substring alone.
+    expected_result: singular-lemma-count(yawm) == 365
+    requires_morphology: true
+    rederivation_note: >-
+      Re-derived from Tanzil Simple-Clean on 2026-06-02. count_by_form("يوم") = 217
+      (identical in Uthmani); count_by_substring("يوم") = 590 (over-counts: includes
+      "يومئذ", plurals and clitics). Neither surface measure equals 365, confirming
+      the asserted figure depends on a singular-noun lemma count that needs
+      morphological data — hence requires_morphology.
+    tags: [constant, morphology]
 
-  # Example of a symbolic (string) asserted value for a pair-equality claim.
-  - id: life-death-equal
+  - id: shahr-month-12
     description: >-
-      The words for "life" (al-hayah) and "death" (al-mawt) are claimed to occur
-      an equal number of times.
+      The singular word for "month" (shahr, شهر) is claimed to occur exactly 12
+      times, matching the number of months in a year.
     source: >-
-      EXAMPLE STUB (Task 5). Common pair-count claim; to be cited and re-derived
-      in Task 6.
-    asserted_value: equal
+      Popular numerical-miracle literature (same word-count-table tradition as
+      yawm-singular-365). Untrusted; re-derived below.
+    asserted_value: 12
     operational_definition: >-
-      EXAMPLE ONLY. Count occurrences of the normalised surface forms for "life"
-      and "death" across the whole corpus and compare. Exact forms, diacritic
-      handling and basmala convention to be specified in Task 6.
-    expected_result: count(life) == count(death)
+      Edition: Tanzil Simple-Clean. Normalisation: canonical normalize() pipeline,
+      no final-form folding. Basmala: separated basmalas excluded. Counted: the
+      singular noun lemma "shahr" across case endings and clitics, EXCLUDING the
+      plural "ashhur"/"shuhur". Lemma-level — not reproducible from surface counts
+      alone.
+    expected_result: singular-lemma-count(shahr) == 12
+    requires_morphology: true
+    rederivation_note: >-
+      Re-derived from Tanzil Simple-Clean on 2026-06-02. count_by_form("شهر") = 4
+      (identical in Uthmani); count_by_substring("شهر") = 20. Neither equals 12; the
+      asserted figure requires a singular-lemma count of "shahr" (excluding plurals)
+      — needs morphology.
+    tags: [constant, morphology]
+
+  - id: ayyam-days-30
+    description: >-
+      The plural word for "days" (ayyam, أيام) is claimed to occur 30 times,
+      matching the number of days in a month.
+    source: >-
+      Popular numerical-miracle literature. Untrusted; re-derived below.
+    asserted_value: 30
+    operational_definition: >-
+      Edition: Tanzil Simple-Clean. Normalisation: canonical normalize() pipeline
+      (which folds the initial hamza, so "أيام" and "ايام" coincide), no final-form
+      folding. Basmala: separated basmalas excluded. Counted: the plural lemma
+      "ayyam" of yawm across case endings and clitics. Lemma-level — not an exact
+      surface-form count.
+    expected_result: plural-lemma-count(ayyam) == 30
+    requires_morphology: true
+    rederivation_note: >-
+      Re-derived from Tanzil Simple-Clean on 2026-06-02. count_by_form("أيام") = 20
+      (and "ايام" = 20; identical in Uthmani after hamza folding);
+      count_by_substring("أيام") = 29 (over-counts: captures clitic-attached forms
+      such as أيامه / أيامهم, yet still does not reach 30). 20 != 30, so the asserted
+      figure depends on a lemma count that captures clitic-attached forms — needs
+      morphology.
+    tags: [constant, morphology]
+
+  - id: sab-seven-heavens
+    description: >-
+      The word "seven" (sab', سبع) — as in the seven heavens — is claimed to occur
+      exactly 7 times in the Quran.
+    source: >-
+      Popular numerical-miracle literature (seven-heavens word-count claim).
+      Untrusted; re-derived below.
+    asserted_value: 7
+    operational_definition: >-
+      Edition: Tanzil Simple-Clean. Normalisation: canonical normalize() pipeline,
+      no final-form folding. Basmala: separated basmalas excluded. The popular
+      statement does not disclose whether it counts only the bare cardinal "سبع",
+      or also "سبعا", "سبعة", "سبعون", and feminine/clitic variants, nor whether the
+      restriction is to the "seven heavens" context only. Counted here (for the
+      re-derivation) as the exact normalised surface form "سبع".
+    expected_result: count_by_form(sab) == 7
     requires_morphology: false
     ambiguity_note: >-
-      EXAMPLE ONLY. The exact set of word forms counted for each side is
-      typically undisclosed in the popular statement; Task 6 must pin it down or
-      mark the claim ambiguous.
+      The popular convention is undisclosed: under exact surface form "سبع" the
+      measured value is 14, not 7, and the claim does not state which derived forms
+      or contexts are included. Without a disclosed counting rule this resolves to
+      ambiguous rather than a forced match/mismatch.
+    rederivation_note: >-
+      Re-derived from Tanzil Simple-Clean on 2026-06-02. count_by_form("سبع") = 14
+      (identical in Uthmani). 14 != 7; the asserted 7 cannot be reproduced under any
+      disclosed surface rule, so the claim is flagged ambiguous.
+    tags: [constant, ambiguous]
+
+  # ----------------------------------------------------------------------------
+  # Single deterministic surface-form constant (reproduces cleanly)
+  # ----------------------------------------------------------------------------
+  - id: dunya-115
+    description: >-
+      The word "this world" (al-dunya, الدنيا) is claimed to occur exactly 115
+      times.
+    source: >-
+      Popular dunya/akhira pair-count literature. Untrusted; re-derived below.
+    asserted_value: 115
+    operational_definition: >-
+      Edition: Tanzil Simple-Clean. Normalisation: canonical normalize() pipeline,
+      no final-form folding. Basmala: separated basmalas excluded. Counted: the
+      exact normalised surface form "الدنيا" (definite article attached) via
+      count_by_form. No lemma analysis — a pure surface-form count.
+    expected_result: count_by_form(al-dunya) == 115
+    requires_morphology: false
+    rederivation_note: >-
+      Re-derived from Tanzil Simple-Clean on 2026-06-02. count_by_form("الدنيا") =
+      115 (identical in Uthmani). The exact surface form reproduces the asserted
+      figure — a clean deterministic match anchor.
+    tags: [constant]
+
+  # ----------------------------------------------------------------------------
+  # Pair-equality claims ("X occurs as often as its opposite")
+  # ----------------------------------------------------------------------------
+  - id: dunya-akhira-equal
+    description: >-
+      The words "this world" (al-dunya, الدنيا) and "the hereafter" (al-akhira,
+      الآخرة) are claimed to occur an equal number of times (popularly, 115 each).
+    source: >-
+      Popular numerical-miracle pair-count literature. Untrusted; re-derived below.
+    asserted_value: equal
+    operational_definition: >-
+      Edition: Tanzil Simple-Clean. Normalisation: canonical normalize() pipeline
+      (which folds the hamza/madda so "الآخرة" and "الاخرة" coincide), no final-form
+      folding. Basmala: separated basmalas excluded. Counted: the exact normalised
+      surface forms "الدنيا" and "الآخرة" via count_by_form; the claim holds iff the
+      two counts are equal.
+    expected_result: count_by_form(al-dunya) == count_by_form(al-akhira)
+    requires_morphology: false
+    ambiguity_note: >-
+      The popular "115 each" statement does not disclose which forms are counted for
+      al-akhira (exact form, all derived forms, or with/without the article). Under
+      exact surface form al-dunya = 115 but al-akhira = 71, so the pair is NOT equal
+      on the disclosed surface definition; the asserted equality depends on an
+      undisclosed counting convention.
+    rederivation_note: >-
+      Re-derived from Tanzil Simple-Clean on 2026-06-02. count_by_form("الدنيا") =
+      115 vs count_by_form("الآخرة") = 71 (identical in Uthmani). 115 != 71 — the
+      surface-form pair mismatches the asserted equality.
     tags: [pair-count]
+
+  - id: hayat-mawt-equal
+    description: >-
+      The words "life" (al-hayat, الحياة) and "death" (al-mawt, الموت) are claimed
+      to occur an equal number of times (popularly, 145 each).
+    source: >-
+      Popular numerical-miracle pair-count literature (life/death pair). Untrusted;
+      re-derived below.
+    asserted_value: equal
+    operational_definition: >-
+      Edition: Tanzil Simple-Clean (REQUIRED here: in Uthmani rasm "life" is spelled
+      الحيوة so its surface form is 0 — see agentdocs/claims-register.md). Normalisation:
+      canonical normalize() pipeline, no final-form folding. Basmala: separated
+      basmalas excluded. The popular "145 each" figure counts every derived form of
+      the roots ح-ي-ي (life) and م-و-ت (death), not just the definite singular
+      nouns; the canonical test therefore needs root/lemma counts.
+    expected_result: lemma-count(life) == lemma-count(death)
+    requires_morphology: true
+    ambiguity_note: >-
+      The popular "145" figure aggregates all derived forms of each root and does
+      not disclose the exact inclusion rules; the definite-singular surface forms
+      give a different (non-equal) result, so the equality cannot be confirmed
+      without disclosed root-level counting.
+    rederivation_note: >-
+      Re-derived from Tanzil Simple-Clean on 2026-06-02. count_by_form("الحياة") = 63
+      vs count_by_form("الموت") = 35 (in Uthmani "الحياة" = 0 because of rasm). The
+      definite-singular surface forms are not equal and neither equals 145, so the
+      asserted equality depends on a root-level lemma count — flagged morphology.
+    tags: [pair-count, morphology]
+
+  - id: malaika-shayatin-equal
+    description: >-
+      The words "angels" (mala'ika, ملائكة) and "devils/satans" (shayatin,
+      شياطين) are claimed to occur an equal number of times (popularly, 88 each).
+    source: >-
+      Popular numerical-miracle pair-count literature (angels/devils pair).
+      Untrusted; re-derived below.
+    asserted_value: equal
+    operational_definition: >-
+      Edition: Tanzil Simple-Clean (REQUIRED: both words use modern rasm; their
+      Uthmani surface forms are 0). Normalisation: canonical normalize() pipeline,
+      no final-form folding. Basmala: separated basmalas excluded. The popular "88
+      each" figure counts all derived forms (singular malak/shaytan, plurals,
+      definite and clitic-attached variants) of each lemma, so the canonical test
+      needs lemma counts rather than a single surface form.
+    expected_result: lemma-count(angel) == lemma-count(devil)
+    requires_morphology: true
+    rederivation_note: >-
+      Re-derived from Tanzil Simple-Clean on 2026-06-02. count_by_form("الملائكة") =
+      38, count_by_form("ملائكة") = 6; count_by_form("الشياطين") = 13,
+      count_by_form("الشيطان") = 63 (all 0 in Uthmani). No single surface form
+      reproduces 88; the asserted figure aggregates lemma-level forms — flagged
+      morphology.
+    tags: [pair-count, morphology]
+
+  - id: rajul-imraa-equal
+    description: >-
+      The words "man" (rajul, رجل) and "woman" (imra'a, امرأة) are claimed to occur
+      an equal number of times (popularly, 24 each).
+    source: >-
+      Popular numerical-miracle pair-count literature (man/woman pair). Untrusted;
+      re-derived below.
+    asserted_value: equal
+    operational_definition: >-
+      Edition: Tanzil Simple-Clean. Normalisation: canonical normalize() pipeline,
+      no final-form folding. Basmala: separated basmalas excluded. The popular "24
+      each" figure counts the singular lemmas "rajul" (man) and "imra'a" (woman)
+      across case endings and clitics, excluding the plurals "rijal"/"nisa'". A
+      lemma-level count, not an exact surface-form count.
+    expected_result: singular-lemma-count(rajul) == singular-lemma-count(imraa)
+    requires_morphology: true
+    rederivation_note: >-
+      Re-derived from Tanzil Simple-Clean on 2026-06-02. count_by_form("رجل") = 13
+      vs count_by_form("امرأة") = 3 (identical in Uthmani). Surface forms are neither
+      equal nor 24; the asserted figure needs a singular-lemma count — flagged
+      morphology.
+    tags: [pair-count, morphology]
+
+  - id: bahr-barr-water-ratio
+    description: >-
+      The word "sea" (bahr, بحر) is claimed to occur 32 times and "land" (barr,
+      بر) 13 times, so sea/(sea+land) = 32/45 ≈ 71.1%, matching the proportion of
+      the Earth's surface covered by water.
+    source: >-
+      Popular numerical-miracle literature (sea/land water-ratio claim, widely
+      attributed to Abdullah Arik / "the water claim"). Untrusted; re-derived below.
+    asserted_value: 32
+    operational_definition: >-
+      Edition: Tanzil Simple-Clean. Normalisation: canonical normalize() pipeline,
+      no final-form folding. Basmala: separated basmalas excluded. The popular claim
+      counts ALL derived forms of the root b-h-r meaning sea (singular, dual,
+      plural, definite, clitic-attached) as 32, and the forms of b-r-r meaning land
+      as 13 — a lemma/root count. The asserted_value here is the sea figure (32).
+    expected_result: lemma-count(bahr-sea) == 32
+    requires_morphology: true
+    ambiguity_note: >-
+      The popular convention is undisclosed and partly contested: it must exclude
+      homographs of b-r-r meaning "righteousness/piety" from the "land" tally, and
+      the bahr forms it includes are not specified. Surface counts do not reproduce
+      it, so without a disclosed lemma rule it is ambiguous.
+    rederivation_note: >-
+      Re-derived from Tanzil Simple-Clean on 2026-06-02. count_by_form("البحر") = 23,
+      count_by_form("بحر") = 1; count_by_substring("بحر") = 40 (includes unrelated
+      forms). No surface measure equals 32; the asserted figure is a root-level
+      count over b-h-r — flagged morphology.
+    tags: [pair-count, morphology, ambiguous]
+
+  # ----------------------------------------------------------------------------
+  # Letter-frequency / muqatta'at claims (deterministic, reproduce cleanly)
+  # ----------------------------------------------------------------------------
+  - id: basmala-19-letters
+    description: >-
+      The basmala "بسم الله الرحمن الرحيم" (bismillah al-rahman al-rahim) is
+      claimed to consist of exactly 19 Arabic letters — the basis of the
+      "Code 19" literature.
+    source: >-
+      Rashad Khalifa / "Submitters" Code-19 literature. Untrusted; re-derived below.
+    asserted_value: 19
+    operational_definition: >-
+      Edition-independent (operates on the literal basmala string, not a corpus
+      scan). Normalisation: canonical normalize() pipeline (tatweel removed,
+      tashkeel stripped, hamza folded), no final-form folding. Counted: the number
+      of non-space characters in normalize("بسم الله الرحمن الرحيم") — i.e. letters
+      only, diacritics and spaces excluded.
+    expected_result: len(normalize("بسم الله الرحمن الرحيم").replace(" ", "")) == 19
+    requires_morphology: false
+    rederivation_note: >-
+      Re-derived on 2026-06-02. normalize("بسم الله الرحمن الرحيم") =
+      "بسم الله الرحمن الرحيم"; removing spaces leaves 19 letters. Reproduces the
+      asserted figure — a clean deterministic match anchor independent of edition.
+    tags: [letter-freq]
+
+  - id: qaf-surah50-frequency
+    description: >-
+      Surah Qaf (chapter 50), which opens with the disjoined letter ق (qaf), is
+      claimed to contain the letter ق exactly 57 times.
+    source: >-
+      Classical muqatta'at letter-frequency literature (qaf-in-Surah-Qaf claim).
+      Untrusted; re-derived below.
+    asserted_value: 57
+    operational_definition: >-
+      Edition: Tanzil Simple-Clean. Normalisation: canonical normalize() pipeline
+      (tashkeel stripped so only consonantal skeleton letters are counted), no
+      final-form folding. Scope: surah 50 only. Basmala: the separated basmala
+      prefixed to verse 1 of surah 50 is EXCLUDED (counts cover the numbered ayas
+      of surah 50 only). Counted: occurrences of the character ق across all words of
+      surah 50 via per-sura letter frequency.
+    expected_result: letter_frequency(surah=50)['ق'] == 57
+    requires_morphology: false
+    rederivation_note: >-
+      Re-derived on 2026-06-02 by summing letter_frequency over the words of surah
+      50: ق = 57 in Tanzil Simple-Clean (identical in Uthmani). Reproduces the
+      asserted figure — a clean deterministic letter-frequency match anchor.
+    tags: [letter-freq]
+
+  - id: noon-surah68-frequency
+    description: >-
+      Surah Al-Qalam (chapter 68), which opens with the disjoined letter ن (nun),
+      is examined for the frequency of the letter ن; popularly asserted as 131.
+    source: >-
+      Muqatta'at letter-frequency literature (nun-in-Surah-Qalam). Untrusted;
+      re-derived below.
+    asserted_value: 131
+    operational_definition: >-
+      Edition: Tanzil Simple-Clean. Normalisation: canonical normalize() pipeline,
+      no final-form folding. Scope: surah 68 only. Basmala: separated basmala of
+      surah 68 EXCLUDED. Counted: occurrences of the character ن across all words of
+      surah 68 via per-sura letter frequency. Note the opening word is written نون
+      ("nun") in full; this surface spelling (two visible ن letters) is what is
+      counted, an orthographic convention that the claim does not always disclose.
+    expected_result: letter_frequency(surah=68)['ن'] == 131
+    requires_morphology: false
+    ambiguity_note: >-
+      Counts of the opening disjoined-letter mnemonic depend on whether the word
+      نون is counted by its spelled-out letters or as the single symbol ن; the
+      popular figure does not always disclose this. Recorded with the spelled-out
+      convention above; treat as ambiguous if a source uses the symbol convention.
+    rederivation_note: >-
+      Re-derived on 2026-06-02 by summing letter_frequency over the words of surah
+      68: ن = 131 in Tanzil Simple-Clean (identical in Uthmani), under the
+      spelled-out نون convention. Reproduces the asserted figure on that convention.
+    tags: [letter-freq, ambiguous]
+
+  # ----------------------------------------------------------------------------
+  # Abjad (gematria) claims (deterministic given the abjad table)
+  # ----------------------------------------------------------------------------
+  - id: abjad-allah-66
+    description: >-
+      The abjad (gematria) value of the divine name "Allah" (الله) is claimed to
+      be 66.
+    source: >-
+      Classical abjad/gematria literature. Untrusted; re-derived below.
+    asserted_value: 66
+    operational_definition: >-
+      Edition-independent (operates on the literal string الله, not a corpus scan).
+      Normalisation: canonical normalize() pipeline before summing. Abjad table: the
+      standard Mashriqi values documented in agentdocs/normalisation.md (ا=1, ل=30,
+      ه=5). Value = 1 + 30 + 30 + 5 = 66 (the doubled lam of the ligature counted
+      twice).
+    expected_result: abjad_value("الله") == 66
+    requires_morphology: false
+    rederivation_note: >-
+      Re-derived on 2026-06-02. abjad_value("الله") = 66 using the module abjad
+      table. Deterministic match anchor independent of edition.
+    tags: [abjad]
+
+  - id: abjad-basmala-786
+    description: >-
+      The abjad (gematria) value of the basmala phrase "بسم الله الرحمن الرحيم"
+      (bismillah al-rahman al-rahim) is claimed to be 786.
+    source: >-
+      Classical abjad/gematria literature (the well-known "786" used as a basmala
+      surrogate). Untrusted; re-derived below.
+    asserted_value: 786
+    operational_definition: >-
+      Edition-independent (operates on the literal basmala string, not a corpus
+      scan). Normalisation: canonical normalize() pipeline before summing; spaces
+      contribute 0. Abjad table: standard Mashriqi values per
+      agentdocs/normalisation.md. Value = sum of the abjad values of every letter of
+      "بسم الله الرحمن الرحيم".
+    expected_result: abjad_value("بسم الله الرحمن الرحيم") == 786
+    requires_morphology: false
+    rederivation_note: >-
+      Re-derived on 2026-06-02. abjad_value("بسم الله الرحمن الرحيم") = 786 using the
+      module abjad table. Deterministic match anchor independent of edition.
+    tags: [abjad]
+
+  # ----------------------------------------------------------------------------
+  # Positional / first-occurrence claim (deterministic but convention-sensitive)
+  # ----------------------------------------------------------------------------
+  - id: allah-first-occurrence-1-1
+    description: >-
+      The divine name "Allah" (الله) is claimed to first appear in the opening
+      verse of the Quran (aya 1:1, the basmala).
+    source: >-
+      Structural observation circulated in positional-pattern literature.
+      Untrusted; re-derived below.
+    asserted_value: "1:1"
+    operational_definition: >-
+      Edition: Tanzil Simple-Clean. Normalisation: canonical normalize() pipeline,
+      no final-form folding. Basmala: the sura-1 basmala IS aya 1:1 and is included
+      (it is a numbered verse). Counted: the (sura, aya) position of the first
+      occurrence of the exact normalised surface form "الله" via
+      first_occurrence_position, scanning in canonical order.
+    expected_result: first_occurrence_position("الله") == (1, 1)
+    requires_morphology: false
+    rederivation_note: >-
+      Re-derived on 2026-06-02. first_occurrence_position("الله") = (1, 1) in both
+      Tanzil Simple-Clean and Uthmani — "الله" is the second word of aya 1:1.
+      Reproduces the asserted position — a clean deterministic positional anchor.
+    tags: [positional]
