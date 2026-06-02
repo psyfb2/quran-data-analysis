@@ -48,9 +48,10 @@ mutated) and committed so tests/CI run offline, exactly like the Tanzil editions
 
 The repo **code** is MIT; this QAC **data file** is GPL. Vendoring a GPL *data
 file* verbatim alongside MIT *code* is **mere aggregation** — it does **not**
-relicense the code. The QAC file keeps its own license header; the Tanzil files
-(CC BY-ND 3.0) are a separate, separately-documented data license (see
-`corpus.md`). No code in this repo is derived from the GPL data.
+relicense the code. The QAC file keeps its own license header; the standalone
+Tanzil files (CC BY 3.0 — see line above for the *embedded* v1.0.2's CC BY-ND 3.0)
+are a separate, separately-documented data license (see `corpus.md`). No code in
+this repo is derived from the GPL data.
 
 ## File format (re-derived empirically from the vendored file)
 
