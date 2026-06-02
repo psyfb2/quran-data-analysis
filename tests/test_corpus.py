@@ -12,7 +12,6 @@ import re
 import pytest
 
 from quran_analysis.corpus import (
-    _EDITION_FILES,
     BASMALA_AYA,
     DATA_DIR,
     Corpus,
@@ -35,7 +34,7 @@ def corpus(request: pytest.FixtureRequest) -> Corpus:
 
 
 def _raw_data_line_count(edition: str) -> int:
-    text = (DATA_DIR / _EDITION_FILES[edition]).read_text(encoding="utf-8-sig")
+    text = (DATA_DIR / f"tanzil-{edition}.txt").read_text(encoding="utf-8-sig")
     return sum(1 for line in text.splitlines() if line.strip() and not line.strip().startswith("#"))
 
 
@@ -110,12 +109,24 @@ def test_2730_basmala_phrase_not_stripped(corpus: Corpus) -> None:
 
 def test_selectors(corpus: Corpus) -> None:
     assert corpus.aya(1, 1).text.strip() != ""
-    assert corpus.sura(2).text.strip() != ""
+    assert corpus.sura(2).text().strip() != ""
     assert corpus.sura(2).number == 2
     with pytest.raises(KeyError):
-        corpus.aya(999, 1)
+        corpus.aya(999, 1)  # unknown sura
+    with pytest.raises(KeyError):
+        corpus.aya(1, 999)  # valid sura, unknown aya
     with pytest.raises(KeyError):
         corpus.sura(115)
+
+
+def test_sura_text_include_basmala(corpus: Corpus) -> None:
+    s2 = corpus.sura(2)
+    base = len(s2.text().split())
+    with_basmala = len(s2.text(include_basmala=True).split())
+    assert with_basmala - base == BASMALA_WORDS  # 4
+    # Sura 1's basmala is aya 1, so the toggle does not change its word count.
+    s1 = corpus.sura(1)
+    assert len(s1.text(include_basmala=True).split()) == len(s1.text().split())
 
 
 def test_determinism() -> None:

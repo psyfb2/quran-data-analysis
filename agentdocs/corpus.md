@@ -64,7 +64,7 @@ Corpus(edition, suras)                      # .sura(n) / .aya(s,a) / .words(...)
   fixtures.
 - Selectors: `Corpus.sura(n)`, `Corpus.aya(sura, aya)` (raise `KeyError` on unknown
   keys), `Corpus.words(*, include_basmala=False)`, `Corpus.text(...)`, plus
-  `Sura.words(...)/.text` and `Aya.words/.text`.
+  `Sura.words(...)/.text(...)` and `Aya.words/.text`.
 
 ## Basmala handling (the load-bearing subtlety)
 

@@ -98,15 +98,6 @@ class Sura:
             return self.ayas[0].words
         return self.separated_basmala
 
-    @property
-    def text(self) -> str:
-        """All verse text of the sura, ayas joined on a single space.
-
-        Excludes any separated basmala (use :attr:`basmala` for that); for sura 1
-        the basmala is included because it is aya 1.
-        """
-        return " ".join(aya.text for aya in self.ayas)
-
     def words(self, *, include_basmala: bool = False) -> tuple[Word, ...]:
         """All verse words of the sura.
 
@@ -119,6 +110,16 @@ class Sura:
         if include_basmala and self.separated_basmala is not None:
             return self.separated_basmala + verse_words
         return verse_words
+
+    def text(self, *, include_basmala: bool = False) -> str:
+        """All verse text of the sura, words joined on a single space.
+
+        Args:
+            include_basmala: When ``True``, prepend the *separated* basmala words
+                (suras 2-114 except 9). For sura 1 the basmala is always present
+                because it is aya 1; sura 9 has none. Mirrors :meth:`Corpus.text`.
+        """
+        return " ".join(w.text for w in self.words(include_basmala=include_basmala))
 
 
 @dataclass(frozen=True)
