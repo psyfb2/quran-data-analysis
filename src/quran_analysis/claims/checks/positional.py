@@ -29,4 +29,8 @@ def _parse_pos(value: int | str) -> tuple[int, int]:
 @check("allah-first-occurrence-1-1")
 def allah_first_occurrence_1_1(claim: Claim, ctx: CheckContext) -> Measurement:
     measured = first_occurrence_position(ctx.corpus("simple-clean"), "الله")
-    return Measurement(measured, measured == _parse_pos(claim.asserted_value))
+    matched = measured == _parse_pos(claim.asserted_value)
+    # Report the measured position in the same "sura:aya" notation as the asserted
+    # value (rather than the raw tuple, which the report would render as "a vs b").
+    rendered = f"{measured[0]}:{measured[1]}" if measured is not None else None
+    return Measurement(rendered, matched)
