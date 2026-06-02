@@ -21,9 +21,14 @@ the engine that evaluates it.
    claim can opt into e.g. final-form folding without claim logic leaking into the
    layer. Counts are meaningful only relative to `normalize()` + the abjad table — see
    `normalisation.md`.
-5. **Claims** (Tasks 5/6/8) — a machine-readable schema governs `claims.yaml`
-   (research output); each claim's check is a registered callable; the runner returns
-   `{asserted, measured, verdict}` with verdict ∈ match/mismatch/ambiguous.
+5. **Claims** (Tasks 5/6/8) — a machine-readable schema (`claims/schema.py`,
+   Task 5) governs the repo-root `claims.yaml` register (research output). The
+   Pydantic v2 `Claim` / `ClaimsRegister` models are the source of truth; the
+   committed `claims/claims.schema.json` is generated from them (drift-guarded by a
+   test). `load_register()` validates the YAML into models and is reused by the
+   runner. Each claim's check is a registered callable; the runner returns
+   `{asserted, measured, verdict}` with verdict ∈ match/mismatch/ambiguous. See
+   `claims-schema.md`.
 6. **Reporting** (Task 9) — renders `reports/verification.md` via `make report`.
 
 Flow: **tooling → corpus + normalisation → primitives → claims → report.**

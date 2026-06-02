@@ -24,10 +24,14 @@ src/quran_analysis/
   corpus.py       # Task 2 — load vendored Tanzil editions into Corpus->Sura->Aya->Word
   normalize.py    # Task 3 — pure tashkeel/hamza/tatweel/tokenisation functions
   primitives.py   # Task 4 — claim-agnostic counts (form/substring/letter-freq/abjad/position)
-  claims/         # Tasks 5/8/9 — schema, claims.yaml loader, check registry, runner, report
+  claims/
+    schema.py          # Task 5 — Claim/ClaimsRegister Pydantic models + load_register()
+    claims.schema.json # Task 5 — JSON Schema generated from the model (drift-guarded)
+                       # Tasks 8/9 add the check registry, runner and report here
+claims.yaml       # Task 5 stub — the claims register (data), governed by claims/schema.py
 tests/            # pytest suite
 data/             # Task 2 — vendored Arabic corpus (committed for offline CI)
-agentdocs/        # architecture.md, corpus.md, normalisation.md
+agentdocs/        # architecture.md, corpus.md, normalisation.md, claims-schema.md
 ```
 
 Layered flow: **tooling → corpus + normalisation → primitives → claims (schema/runner) → report.**
@@ -37,7 +41,8 @@ See `agentdocs/architecture.md` for the full design.
 
 - **Dependency management:** `uv`. Dev tools (ruff, pytest, pre-commit) live in the
   PEP 735 `[dependency-groups].dev` table. **Runtime** deps go in `[project].dependencies`
-  and are added **per task as needed** (currently empty). `uv.lock` is committed.
+  and are added **per task as needed** (`pydantic` + `pyyaml` landed in Task 5 for the
+  claims schema/loader). `uv.lock` is committed.
 - **Lint/format:** `ruff` (line-length 100, rules `E,F,I,UP,B`). The `ruff` version is
   pinned **identically** in `pyproject.toml` and `.pre-commit-config.yaml` so the two
   ruff paths never drift.

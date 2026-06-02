@@ -1,0 +1,106 @@
+{
+  "$defs": {
+    "Claim": {
+      "additionalProperties": false,
+      "description": "A single quantifiable claim about the Arabic text of the Quran.\n\n``extra=\"forbid\"`` makes the \"rejects invalid entries\" contract meaningful:\nan unknown or typo'd key (e.g. ``asserted`` instead of ``asserted_value``)\nraises rather than being silently dropped, catching authoring mistakes early.",
+      "properties": {
+        "id": {
+          "minLength": 1,
+          "pattern": "^[a-z0-9][a-z0-9_-]*$",
+          "title": "Id",
+          "type": "string"
+        },
+        "description": {
+          "minLength": 1,
+          "title": "Description",
+          "type": "string"
+        },
+        "source": {
+          "minLength": 1,
+          "title": "Source",
+          "type": "string"
+        },
+        "asserted_value": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "title": "Asserted Value"
+        },
+        "operational_definition": {
+          "minLength": 1,
+          "title": "Operational Definition",
+          "type": "string"
+        },
+        "expected_result": {
+          "minLength": 1,
+          "title": "Expected Result",
+          "type": "string"
+        },
+        "requires_morphology": {
+          "default": false,
+          "title": "Requires Morphology",
+          "type": "boolean"
+        },
+        "ambiguity_note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ambiguity Note"
+        },
+        "rederivation_note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Rederivation Note"
+        },
+        "tags": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Tags",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "description",
+        "source",
+        "asserted_value",
+        "operational_definition",
+        "expected_result"
+      ],
+      "title": "Claim",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "The full claims register: an ordered list of claims with unique ids.",
+  "properties": {
+    "claims": {
+      "items": {
+        "$ref": "#/$defs/Claim"
+      },
+      "title": "Claims",
+      "type": "array"
+    }
+  },
+  "title": "ClaimsRegister",
+  "type": "object"
+}
