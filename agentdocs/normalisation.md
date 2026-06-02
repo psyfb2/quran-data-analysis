@@ -77,3 +77,31 @@ Task 4 counting primitives use.
 - Because superscript alef and final-form folding change counts, any claim sensitive to them
   must state its own convention in its operational definition (Task 6) rather than relying on
   a global default.
+
+## Primitives & the abjad table (Task 4)
+
+The counting primitives in `src/quran_analysis/primitives.py` are all defined **relative to
+the normalisation above**. Each corpus-scanning primitive applies a `normalizer`
+(default `normalize()`) to *both* the corpus surface forms and the query, and threads the
+`include_basmala` toggle exposed by the loader. Two conventions are load-bearing:
+
+### Substring matching is intra-word
+`count_by_substring` counts **non-overlapping** (`str.count` semantics) occurrences of the
+normalised needle **within each normalised word**. Matches never span token boundaries —
+spanning would depend on the single-space join artifact and be ambiguous. Empty/whitespace
+or diacritic-only needles (which normalise to empty) return `0` (guarding the degenerate
+`"".count` behaviour).
+
+### Abjad (gematria) table — standard *Mashriqi*
+`abjad_value` normalises first, then sums per-character values:
+
+```
+ا1  ب2  ج3  د4  ه5  و6  ز7  ح8  ط9  ي10  ك20  ل30  م40  ن50  س60
+ع70 ف80 ص90 ق100 ر200 ش300 ت400 ث500 خ600 ذ700 ض800 ظ900 غ1000
+```
+
+`normalize()` does **not** fold the standalone hamza `ء`, alef-maksura `ى` or teh-marbuta
+`ة`, so these are mapped **directly** in the table (`ء`→1, `ى`→10 as yeh, `ة`→5 as heh) and
+`abjad_value` is well-defined without forcing `normalize_final_forms`. Any character absent
+from the table (digits, punctuation, spaces) contributes `0`. Example: `abjad_value("الله")`
+= 1 + 30 + 30 + 5 = **66**.
