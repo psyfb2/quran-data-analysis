@@ -49,6 +49,7 @@
         "ambiguity_note": {
           "anyOf": [
             {
+              "minLength": 1,
               "type": "string"
             },
             {

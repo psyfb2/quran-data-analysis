@@ -22,7 +22,7 @@ See ``agentdocs/claims-schema.md`` for the field reference and how-to.
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any
+from typing import Annotated, Any
 
 import yaml
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
@@ -63,7 +63,9 @@ class Claim(BaseModel):
     requires_morphology: bool = False
     # Set when the counting convention is undisclosed/non-deterministic; the
     # runner resolves such claims to an "ambiguous" verdict rather than forcing one.
-    ambiguity_note: str | None = None
+    # min_length=1 on the non-None case: an empty string is falsy, so the runner
+    # would silently skip the ambiguous path — reject it at the schema boundary.
+    ambiguity_note: Annotated[str, Field(min_length=1)] | None = None
     # Evidence that the assertion was re-derived from the Arabic text itself
     # (research-phase sources are treated as untrusted).
     rederivation_note: str | None = None

@@ -138,6 +138,15 @@ def test_empty_required_string_rejected(field: str) -> None:
         Claim.model_validate(d)
 
 
+def test_empty_ambiguity_note_rejected() -> None:
+    # An empty ambiguity_note is falsy, so the runner would silently skip the
+    # ambiguous path — the schema must reject it (min_length=1 on the non-None case).
+    d = _valid_claim_dict()
+    d["ambiguity_note"] = ""
+    with pytest.raises(ValidationError):
+        Claim.model_validate(d)
+
+
 def test_duplicate_ids_rejected_at_register_level() -> None:
     c = _valid_claim_dict()
     with pytest.raises(ValidationError):
