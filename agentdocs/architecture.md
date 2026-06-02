@@ -5,9 +5,11 @@ the engine that evaluates it.
 
 1. **Project & tooling** — uv-managed `pyproject.toml`, ruff (format + lint), a
    pre-commit hook, a `Makefile` (`install/format/lint/test/report`) and CI.
-2. **Corpus/data** (Task 2) — vendored Tanzil Uthmani (primary) + Simple-Clean
-   (secondary) editions parsed into an immutable `Corpus -> Sura -> Aya -> Word` model
-   keyed by `(sura, aya)`, with the basmala individually addressable.
+2. **Corpus/data** (`corpus.py`) — vendored Tanzil Uthmani (primary) + Simple-Clean
+   (secondary) editions parsed by `load_corpus()` into an immutable, frozen-dataclass
+   `Corpus -> Sura -> Aya -> Word` model keyed by `(sura, aya)`, with the opening
+   basmala separated and individually addressable (`Sura.basmala` /
+   `words(include_basmala=...)`). See `corpus.md`.
 3. **Normalisation** (Task 3) — pure string functions: diacritic stripping, hamza/alif
    normalisation, tatweel removal, tokenisation. See `normalisation.md`.
 4. **Primitives** (Task 4) — claim-agnostic measurements: `count_by_form`,
