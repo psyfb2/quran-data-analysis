@@ -1,8 +1,8 @@
 """Tests for the pure text-normalisation utilities.
 
 These use small inline Arabic literals only — no corpus load — so the suite stays
-fast, deterministic and offline. Diacritics / marks are written with explicit
-``\\uXXXX`` escapes so each test is unambiguous about which codepoint it exercises.
+fast, deterministic and offline. Arabic letters and marks are embedded directly as
+Unicode literals, with comments naming the codepoints each test exercises.
 """
 
 from __future__ import annotations
@@ -147,8 +147,6 @@ def test_normalize_is_idempotent() -> None:
     assert normalize(normalize(UTHMANI_RAHMAN)) == normalize(UTHMANI_RAHMAN)
 
 
-def test_normalize_does_not_mutate_input() -> None:
-    # Strings are immutable; assert the original literal is unchanged after calls.
-    original = UTHMANI_RAHMAN
-    _ = normalize(original)
-    assert original == UTHMANI_RAHMAN
+def test_normalize_empty_string() -> None:
+    # PRD-mandated edge case: the whole pipeline must handle empty input.
+    assert normalize("") == ""
