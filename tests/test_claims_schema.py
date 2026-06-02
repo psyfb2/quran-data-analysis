@@ -160,3 +160,26 @@ def test_stub_claims_yaml_validates() -> None:
 def test_committed_json_schema_matches_model() -> None:
     committed = json.loads(SCHEMA_JSON_PATH.read_text(encoding="utf-8"))
     assert committed == json_schema()
+
+
+def test_load_register_missing_path_raises_clear_error(tmp_path: Path) -> None:
+    missing = tmp_path / "does-not-exist.yaml"
+    with pytest.raises(FileNotFoundError, match="Claims register not found"):
+        load_register(missing)
+
+
+def test_load_register_path_override(tmp_path: Path) -> None:
+    register_file = tmp_path / "synthetic.yaml"
+    register_file.write_text(
+        "claims:\n"
+        "  - id: synthetic-claim\n"
+        "    description: A synthetic claim.\n"
+        "    source: test fixture\n"
+        "    asserted_value: 7\n"
+        "    operational_definition: count something; basmala excluded.\n"
+        "    expected_result: count == 7\n",
+        encoding="utf-8",
+    )
+    register = load_register(register_file)
+    assert [c.id for c in register.claims] == ["synthetic-claim"]
+    assert register.claims[0].asserted_value == 7

@@ -65,6 +65,12 @@ field, add it to the model **and regenerate the JSON Schema** (below).
 
 ## Regenerating the JSON Schema
 
+> **Note:** fields with a `default_factory` (`tags`, and `ClaimsRegister.claims`) do
+> **not** emit a `"default"` entry in the generated JSON Schema, and are therefore
+> absent from the schema's `required` arrays — this is expected Pydantic behaviour.
+> Omitting them is legal (they default to `[]`). The **Pydantic model is the
+> authoritative validator**; the JSON Schema is a derived convenience artefact.
+
 The committed `claims.schema.json` is generated from the model; a drift-guard test
 (`test_committed_json_schema_matches_model`) fails if they diverge. Regenerate with:
 

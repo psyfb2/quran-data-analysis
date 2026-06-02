@@ -113,7 +113,11 @@ def load_register(path: Path = DEFAULT_REGISTER_PATH) -> ClaimsRegister:
     claim-runner reuses this function — it is the only entry point for turning
     the YAML register into validated models.
     """
-    raw: Any = yaml.safe_load(path.read_text(encoding="utf-8"))
+    try:
+        text = path.read_text(encoding="utf-8")
+    except FileNotFoundError as exc:
+        raise FileNotFoundError(f"Claims register not found: {path}") from exc
+    raw: Any = yaml.safe_load(text)
     if raw is None:
         raw = {"claims": []}
     return ClaimsRegister.model_validate(raw)
