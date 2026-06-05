@@ -1,0 +1,46 @@
+[project]
+name = "quran-data-analysis"
+version = "0.1.0"
+description = "Verify or refute widely-claimed numerical/linguistic patterns in the Arabic text of the Quran (CSTC-6)."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { file = "LICENSE" }
+# Runtime dependencies are added per-task as needed. pydantic (claims schema,
+# source of truth) and pyyaml (claims.yaml register loader) landed in Task 5.
+dependencies = [
+    "pydantic>=2.13.4",
+    "pyyaml>=6.0.3",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/quran_analysis"]
+
+[dependency-groups]
+dev = [
+    "ruff==0.14.2",
+    "pytest>=8",
+    "pre-commit>=3",
+    "mypy>=1.10",
+    "types-pyyaml>=6.0.12.20260518",
+]
+
+[tool.ruff]
+line-length = 100
+src = ["src", "tests"]
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.mypy]
+python_version = "3.11"
+files = ["src", "tests"]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
